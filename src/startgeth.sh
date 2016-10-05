@@ -39,6 +39,8 @@ if [ "$RUN_BOOTNODE" == "true" ]; then
        echo "(creating $KEY_FILE)"
        bootnode --genkey="$KEY_FILE"
     fi
+    echo "running dht seed node"
+    node /opt/ethbox/simulation/dhtseed.js &
     echo "Running bootnode with arguments '--nodekey=$KEY_FILE --addr $MY_IP:30301 $@'"
     exec /usr/bin/bootnode --nodekey="$KEY_FILE" --addr "$MY_IP:30301" "$@"
 fi

@@ -1,8 +1,22 @@
 # Ethereum playground for private networks
 #
-FROM ethereum/client-go
+#FROM ethereum/client-go
+FROM ubuntu:14.04
 
-MAINTAINER Andre Fernandes <andre@vertigo.com.br>
+
+#-----------------------------------------------------------------------------
+#install geth
+RUN apt-get update && \
+    apt-get upgrade -q -y && \
+    apt-get dist-upgrade -q -y && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 923F6CA9 && \
+    echo "deb http://ppa.launchpad.net/ethereum/ethereum/ubuntu wily main" | tee -a /etc/apt/sources.list.d/ethereum.list && \
+    apt-get update && \
+    apt-get install -q -y geth
+
+EXPOSE 8545
+EXPOSE 30303
+#-----------------------------------------------------------------------------
 
 ENV GEN_NONCE="0xeddeadbabeeddead" \
     DATA_DIR="/root/.ethereum" \
@@ -12,7 +26,7 @@ ENV GEN_NONCE="0xeddeadbabeeddead" \
     BOOTNODE_URL=""
 
 RUN apt-get update -y && \
-    apt-get install -y bootnode iproute2 curl xz-utils firefox&& \
+    apt-get install -y bootnode iproute2 curl xz-utils firefox && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -46,7 +60,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 #-------------------------------------------------------------------------------
 # install chrome
-#RUN \
+# RUN \
 #  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
 #  echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
 #  apt-get update && \
@@ -54,7 +68,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 #  rm -rf /var/lib/apt/lists/*
 #-------------------------------------------------------------------------------
 
-WORKDIR /opt
+WORKDIR /opt/
 
 # herdados de ethereum/client-go
 # EXPOSE 30303
@@ -63,7 +77,35 @@ WORKDIR /opt
 # bootnode port
 EXPOSE 30301
 
+# kad port
+EXPOSE 1337
+EXPOSE 1338
+
 ADD src/* /opt/
+
+
+# Replace 1000 with your user / group id
+RUN export uid=1000 gid=1000 && \
+    mkdir -p /home/developer && \
+    echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+    echo "developer:x:${uid}:" >> /etc/group && \
+    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+    chmod 0440 /etc/sudoers.d/developer && \
+    chown ${uid}:${gid} -R /home/developer
+# ENV HOME /home/developer
+RUN export uid=1000 gid=1000 && \
+    mkdir -p /home/developera && \
+    echo "developera:x:${uid}:${gid}:Developera,,,:/home/developera:/bin/bash" >> /etc/passwd && \
+    echo "developera:x:${uid}:" >> /etc/group && \
+    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developera && \
+    chmod 0440 /etc/sudoers.d/developera && \
+    chown ${uid}:${gid} -R /home/developera
+
+
+# WORKDIR /home/developer/
+# USER developer
+# ENTRYPOINT ["sudo", "/opt/startgeth.sh"]
+
 
 ENTRYPOINT ["/opt/startgeth.sh"]
 

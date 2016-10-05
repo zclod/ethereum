@@ -12,6 +12,7 @@ GEN_ARG=
 [[ ! -z $GEN_ALLOC ]] && GEN_ARG="-e GEN_ALLOC=$GEN_ALLOC"
 docker run -d --name ethereum-bootnode \
     -v $(pwd)/.bootnode:/opt/bootnode \
+    -v $APP_ROOT:/opt/ethbox \
     -p 30301:30301 \
     -p 30301:30301/udp \
     -e "RUN_BOOTNODE=true" \

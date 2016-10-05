@@ -14,7 +14,7 @@ UDP_PORTMAP=
 RPC_PORT=8545
 [[ ! -z $NET_ID ]] && NET_ARG="-e NET_ID=$NET_ID"
 [[ ! -z $GEN_ALLOC ]] && GEN_ARG="-e GEN_ALLOC=$GEN_ALLOC"
-[[ ! -z $RPC_PORT ]] && RPC_ARG='--rpc --rpcaddr=0.0.0.0 --rpcapi=db,eth,net,web3,personal --rpccorsdomain "*"' && RPC_PORTMAP="-p $RPC_PORT:8545"
+[[ ! -z $RPC_PORT ]] && RPC_ARG='--rpc --rpcaddr=0.0.0.0 --rpcapi=db,eth,net,web3,personal --rpccorsdomain=* ' #&& RPC_PORTMAP="-p $RPC_PORT:8545"
 [[ ! -z $UDP_PORT ]] && UDP_PORTMAP="-p $UDP_PORT:30303 -p $UDP_PORT:30303/udp"
 BOOTNODE_URL=${BOOTNODE_URL:-$(./getbootnodeurl.sh)}
 echo "Running new container $CONTAINER_NAME..."
@@ -23,6 +23,6 @@ docker run -d --name $CONTAINER_NAME \
     -v $APP_ROOT:/opt/ethbox \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -e "BOOTNODE_URL=$BOOTNODE_URL" \
-    -e DISPLAY=unix$DISPLAY \
+    -e DISPLAY=$DISPLAY \
     $NET_ARG $GEN_ARG $RPC_PORTMAP $UDP_PORTMAP \
     vertigo/ethereum $RPC_ARG --identity $NODE_NAME --cache=512 --verbosity=5 --maxpeers=3 ${@:2} --gpomin 1
