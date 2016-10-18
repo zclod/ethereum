@@ -41,6 +41,8 @@ if [ "$RUN_BOOTNODE" == "true" ]; then
     fi
     echo "running dht seed node"
     node /opt/ethbox/simulation/dhtseed.js &
+    echo "runnung peerjs server"
+    node /opt/ethbox/node_modules/peer/bin/peerjs -p 9000 &
     echo "Running bootnode with arguments '--nodekey=$KEY_FILE --addr $MY_IP:30301 $@'"
     exec /usr/bin/bootnode --nodekey="$KEY_FILE" --addr "$MY_IP:30301" "$@"
 fi
