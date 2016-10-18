@@ -25,4 +25,4 @@ docker run -d --name $CONTAINER_NAME \
     -e "BOOTNODE_URL=$BOOTNODE_URL" \
     -e DISPLAY=$DISPLAY \
     $NET_ARG $GEN_ARG $RPC_PORTMAP $UDP_PORTMAP \
-    vertigo/ethereum $RPC_ARG --identity $NODE_NAME --cache=512 --verbosity=5 --maxpeers=3 ${@:2} --gpomin 1
+    vertigo/ethereum $RPC_ARG --identity $NODE_NAME --cache=512 --verbosity=5 --maxpeers=3 ${@:2} --gpomin 1 --gasprice 1
